@@ -1,67 +1,106 @@
-import { TenantLead, LeadFormData } from "@shared/schema";
+import { TenantLead, LeadFormData, InsertLead } from "@shared/schema";
 
-const mockBusinessData: Omit<TenantLead, 'id'>[] = [
+// Extended mock data for database insertion
+const mockBusinessDataForDB = [
   {
-    name: "BrightCo Marketing",
+    businessName: "BrightCo Marketing",
     industry: "Digital Marketing Agency",
-    reasoning: "Growing marketing firm needs professional office space with good visibility for client meetings and team collaboration.",
-    contact: "sarah.johnson@brightco.com"
+    rationale: "Growing marketing firm needs professional office space with good visibility for client meetings and team collaboration.",
+    contactName: "Sarah Johnson",
+    email: "sarah.johnson@brightco.com",
+    website: "https://brightcomarketing.com",
+    linkedinUrl: "https://linkedin.com/company/brightco-marketing"
   },
   {
-    name: "Artisan Coffee Roasters",
+    businessName: "Artisan Coffee Roasters",
     industry: "Coffee Shop & Roastery",
-    reasoning: "Established coffee roaster looking to expand retail presence with high foot traffic and storage for inventory.",
-    contact: "mike.wilson@artisancoffee.com"
+    rationale: "Established coffee roaster looking to expand retail presence with high foot traffic and storage for inventory.",
+    contactName: "Mike Wilson",
+    email: "mike.wilson@artisancoffee.com",
+    website: "https://artisancoffeeroasters.com",
+    linkedinUrl: "https://linkedin.com/company/artisan-coffee-roasters"
   },
   {
-    name: "TechStart Solutions",
+    businessName: "TechStart Solutions",
     industry: "Software Development",
-    reasoning: "Fast-growing tech startup requiring modern office space with parking for remote team meetups and client presentations.",
-    contact: "alex.chen@techstart.io"
+    rationale: "Fast-growing tech startup requiring modern office space with parking for remote team meetups and client presentations.",
+    contactName: "Alex Chen",
+    email: "alex.chen@techstart.io",
+    website: "https://techstartsolutions.io",
+    linkedinUrl: "https://linkedin.com/company/techstart-solutions"
   },
   {
-    name: "Urban Fitness Studio",
+    businessName: "Urban Fitness Studio",
     industry: "Health & Wellness",
-    reasoning: "Boutique fitness brand seeking ground-floor space with parking and high visibility for walk-in customers.",
-    contact: "jenny.martinez@urbanfitness.com"
+    rationale: "Boutique fitness brand seeking ground-floor space with parking and high visibility for walk-in customers.",
+    contactName: "Jenny Martinez",
+    email: "jenny.martinez@urbanfitness.com",
+    website: "https://urbanfitnessstudio.com",
+    linkedinUrl: "https://linkedin.com/company/urban-fitness-studio"
   },
   {
-    name: "Gourmet Provisions",
+    businessName: "Gourmet Provisions",
     industry: "Specialty Food Store",
-    reasoning: "Premium food retailer needs accessible location with loading dock for deliveries and retail visibility.",
-    contact: "david.brown@gourmetprovisions.com"
+    rationale: "Premium food retailer needs accessible location with loading dock for deliveries and retail visibility.",
+    contactName: "David Brown",
+    email: "david.brown@gourmetprovisions.com",
+    website: "https://gourmetprovisions.com",
+    linkedinUrl: "https://linkedin.com/company/gourmet-provisions"
   },
   {
-    name: "Creative Design Co",
+    businessName: "Creative Design Co",
     industry: "Graphic Design Studio",
-    reasoning: "Design agency looking for inspiring workspace with natural light and space for creative team collaboration.",
-    contact: "lisa.thompson@creativedesign.co"
+    rationale: "Design agency looking for inspiring workspace with natural light and space for creative team collaboration.",
+    contactName: "Lisa Thompson",
+    email: "lisa.thompson@creativedesign.co",
+    website: "https://creativedesignco.com",
+    linkedinUrl: "https://linkedin.com/company/creative-design-co"
   },
   {
-    name: "Metro Legal Services",
+    businessName: "Metro Legal Services",
     industry: "Law Firm",
-    reasoning: "Growing legal practice needs professional office space with parking and private meeting areas for client consultations.",
-    contact: "robert.davis@metrolegal.com"
+    rationale: "Growing legal practice needs professional office space with parking and private meeting areas for client consultations.",
+    contactName: "Robert Davis",
+    email: "robert.davis@metrolegal.com",
+    website: "https://metrolegalservices.com",
+    linkedinUrl: "https://linkedin.com/company/metro-legal-services"
   },
   {
-    name: "Fresh Market Co",
+    businessName: "Fresh Market Co",
     industry: "Organic Grocery",
-    reasoning: "Organic food retailer seeking storefront with loading dock access and visibility for health-conscious customers.",
-    contact: "maria.garcia@freshmarket.co"
+    rationale: "Organic food retailer seeking storefront with loading dock access and visibility for health-conscious customers.",
+    contactName: "Maria Garcia",
+    email: "maria.garcia@freshmarket.co",
+    website: "https://freshmarketco.com",
+    linkedinUrl: "https://linkedin.com/company/fresh-market-co"
   },
   {
-    name: "Innovation Labs",
+    businessName: "Innovation Labs",
     industry: "Research & Development",
-    reasoning: "R&D company requires flexible office space with room for equipment and collaborative work areas.",
-    contact: "james.kim@innovationlabs.com"
+    rationale: "R&D company requires flexible office space with room for equipment and collaborative work areas.",
+    contactName: "James Kim",
+    email: "james.kim@innovationlabs.com",
+    website: "https://innovationlabs.com",
+    linkedinUrl: "https://linkedin.com/company/innovation-labs"
   },
   {
-    name: "Boutique Wellness",
+    businessName: "Boutique Wellness",
     industry: "Medical Spa",
-    reasoning: "Wellness center needs accessible location with parking and professional atmosphere for client treatments.",
-    contact: "patricia.white@boutiquewellness.com"
+    rationale: "Wellness center needs accessible location with parking and professional atmosphere for client treatments.",
+    contactName: "Patricia White",
+    email: "patricia.white@boutiquewellness.com",
+    website: "https://boutiquewellness.com",
+    linkedinUrl: "https://linkedin.com/company/boutique-wellness"
   }
 ];
+
+// Legacy mock data for frontend display (mapped from database format)
+const mockBusinessData: Omit<TenantLead, 'id'>[] = mockBusinessDataForDB.map(lead => ({
+  name: lead.businessName,
+  industry: lead.industry,
+  reasoning: lead.rationale,
+  contact: lead.email
+}));
 
 export function generateLeads(formData: LeadFormData): Promise<TenantLead[]> {
   return new Promise((resolve) => {
@@ -80,5 +119,19 @@ export function generateLeads(formData: LeadFormData): Promise<TenantLead[]> {
       
       resolve(results);
     }, 1500);
+  });
+}
+
+export function generateLeadsForDatabase(formData: LeadFormData): Promise<InsertLead[]> {
+  return new Promise((resolve) => {
+    // Simulate API delay
+    setTimeout(() => {
+      // Shuffle and select random results
+      const shuffled = mockBusinessDataForDB.sort(() => 0.5 - Math.random());
+      const resultCount = Math.floor(Math.random() * 6) + 5; // 5-10 results
+      const selectedResults = shuffled.slice(0, resultCount);
+      
+      resolve(selectedResults);
+    }, 100); // Shorter delay since this is for internal use
   });
 }

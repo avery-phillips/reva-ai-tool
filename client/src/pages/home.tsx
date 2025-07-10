@@ -9,8 +9,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Search, Copy, Download, Mail, Loader2, Check } from "lucide-react";
 import { LeadFormData, TenantLead, leadFormSchema, propertyFeatures } from "@shared/schema";
-import { generateLeads } from "@/lib/leadGenerator";
+import { generateLeads, generateLeadsForDatabase } from "@/lib/leadGenerator";
 import { exportToCSV, copyAllLeads, copyContact } from "@/lib/csvExport";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
   const [leads, setLeads] = useState<TenantLead[]>([]);
@@ -31,9 +32,26 @@ export default function Home() {
   const onSubmit = async (data: LeadFormData) => {
     setIsLoading(true);
     try {
+      // Generate leads for display
       const generatedLeads = await generateLeads(data);
       setLeads(generatedLeads);
+
+      // Generate leads for database insertion (with extended fields)
+      const leadsForDB = await generateLeadsForDatabase(data);
+      
+      // Save leads to database
+      await apiRequest("/api/leads", {
+        method: "POST",
+        body: JSON.stringify(leadsForDB),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      console.log(`Successfully saved ${leadsForDB.length} leads to database`);
+      
     } catch (error) {
+      console.error("Error generating or saving leads:", error);
       toast({
         title: "Error",
         description: "Failed to generate leads. Please try again.",

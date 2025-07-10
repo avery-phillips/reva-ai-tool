@@ -78,10 +78,18 @@ The application uses Zod schemas for type safety across the stack:
 - **Environment Variables**: DATABASE_URL required for PostgreSQL connection
 - **Type Safety**: Drizzle generates TypeScript types from database schema
 
+### Recent Changes (January 2025)
+- **Database Integration**: Migrated from in-memory storage to PostgreSQL with Drizzle ORM
+- **Lead Persistence**: All AI-generated tenant leads are now automatically saved to database
+- **Enhanced Data Model**: Added comprehensive lead schema with business contact details
+- **API Routes**: Implemented RESTful endpoints for lead creation and retrieval
+
 ### Current Implementation Notes
-- **Storage**: Currently uses in-memory storage with interface ready for database integration
-- **Lead Generation**: Mock implementation returns predefined business data
+- **Storage**: PostgreSQL database with Drizzle ORM for type-safe operations
+- **Lead Generation**: Mock implementation returns predefined business data and saves to database
+- **Lead Persistence**: Bulk insert operations with UUID primary keys and UTC timestamps
+- **Database Tables**: Users table (authentication-ready) and leads table (active)
 - **Authentication**: Not implemented in current version
 - **Real-time Features**: Not implemented in current version
 
-The architecture is designed to be scalable and maintainable, with clear separation of concerns and type safety throughout the stack.
+The architecture is designed to be scalable and maintainable, with clear separation of concerns and type safety throughout the stack. Database integration maintains the same frontend interface while adding persistent data storage.
