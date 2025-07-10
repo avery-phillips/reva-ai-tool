@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 export const leadFormSchema = z.object({
   businessType: z.string().min(1, "Business type is required"),
@@ -28,3 +30,19 @@ export const propertyFeatures = [
 ] as const;
 
 export type PropertyFeature = typeof propertyFeatures[number];
+
+// Database tables
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
