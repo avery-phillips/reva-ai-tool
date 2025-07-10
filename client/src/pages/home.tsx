@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,16 @@ import { exportToCSV, copyAllLeads, copyContact } from "@/lib/csvExport";
 export default function Home() {
   const [leads, setLeads] = useState<TenantLead[]>([]);
   const [savedLeads, setSavedLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [showSavedLeads, setShowSavedLeads] = useState(false);
   const [copyAllStatus, setCopyAllStatus] = useState<'idle' | 'success'>('idle');
+  const [filters, setFilters] = useState({
+    industry: '',
+    contactName: '',
+    keywords: ''
+  });
   const { toast } = useToast();
 
   const form = useForm<LeadFormData>({
@@ -127,6 +133,7 @@ export default function Home() {
       }
       const leads = await response.json();
       setSavedLeads(leads);
+      setFilteredLeads(leads);
       setShowSavedLeads(true);
       toast({
         title: "Success",
@@ -143,6 +150,44 @@ export default function Home() {
       setIsLoadingSaved(false);
     }
   };
+
+  const applyFilters = () => {
+    let filtered = savedLeads;
+
+    if (filters.industry) {
+      filtered = filtered.filter(lead => 
+        lead.industry.toLowerCase().includes(filters.industry.toLowerCase())
+      );
+    }
+
+    if (filters.contactName) {
+      filtered = filtered.filter(lead => 
+        lead.contactName.toLowerCase().includes(filters.contactName.toLowerCase())
+      );
+    }
+
+    if (filters.keywords) {
+      filtered = filtered.filter(lead => 
+        lead.rationale.toLowerCase().includes(filters.keywords.toLowerCase())
+      );
+    }
+
+    setFilteredLeads(filtered);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      industry: '',
+      contactName: '',
+      keywords: ''
+    });
+    setFilteredLeads(savedLeads);
+  };
+
+  // Apply filters whenever filters change
+  useEffect(() => {
+    applyFilters();
+  }, [filters, savedLeads]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-neutral">
@@ -432,6 +477,53 @@ export default function Home() {
                   Hide Saved Leads
                 </Button>
               </div>
+
+              {/* Filter Section */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Filter Leads</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                    <Input
+                      placeholder="e.g., Marketing, Coffee, Legal"
+                      value={filters.industry}
+                      onChange={(e) => setFilters(prev => ({ ...prev, industry: e.target.value }))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Contact Name</label>
+                    <Input
+                      placeholder="e.g., Sarah, Mike, Alex"
+                      value={filters.contactName}
+                      onChange={(e) => setFilters(prev => ({ ...prev, contactName: e.target.value }))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Keywords in Rationale</label>
+                    <Input
+                      placeholder="e.g., office, parking, visibility"
+                      value={filters.keywords}
+                      onChange={(e) => setFilters(prev => ({ ...prev, keywords: e.target.value }))}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-4">
+                  <div className="text-sm text-gray-600">
+                    Showing {filteredLeads.length} of {savedLeads.length} leads
+                  </div>
+                  <Button
+                    onClick={clearFilters}
+                    variant="outline"
+                    size="sm"
+                    disabled={!filters.industry && !filters.contactName && !filters.keywords}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
               
               {isLoadingSaved ? (
                 <div className="text-center py-8">
@@ -442,9 +534,13 @@ export default function Home() {
                 <div className="text-center py-8">
                   <p className="text-gray-500">No saved leads found in database.</p>
                 </div>
+              ) : filteredLeads.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No leads match your current filters. Try adjusting the criteria above.</p>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {savedLeads.map((lead) => (
+                  {filteredLeads.map((lead) => (
                     <div key={lead.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
                       <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-2">
                         <h3 className="text-lg font-bold text-gray-900">{lead.businessName}</h3>
