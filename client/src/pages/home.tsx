@@ -234,10 +234,10 @@ export default function Home() {
                   )}
                 />
                 
-                <div className="flex justify-center">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                   <Button 
                     type="submit" 
-                    className="bg-primary text-white px-8 py-3 font-medium hover:bg-blue-700"
+                    className="bg-primary text-white px-8 py-3 font-medium hover:bg-blue-700 w-full sm:w-auto"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -247,6 +247,19 @@ export default function Home() {
                     )}
                     Generate Tenant Leads
                   </Button>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => form.reset()}
+                    className="w-full sm:w-auto"
+                    disabled={isLoading}
+                  >
+                    Clear Form
+                  </Button>
+                </div>
+                
+                <div className="text-center text-sm text-gray-500 mt-4">
+                  REVA uses AI to simulate potential tenants based on your input. Results are sample suggestions — API enrichment coming soon.
                 </div>
               </form>
             </Form>
@@ -265,13 +278,13 @@ export default function Home() {
         {leads.length > 0 && !isLoading && (
           <Card>
             <CardContent className="p-8">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900">Tenant Suggestions</h2>
-                <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-2xl font-semibold text-gray-900">🎯 Suggested Tenants for Your Property</h2>
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                   <Button 
                     onClick={handleCopyAll}
                     variant="secondary"
-                    className="bg-gray-600 text-white hover:bg-gray-700"
+                    className="bg-gray-600 text-white hover:bg-gray-700 w-full sm:w-auto"
                   >
                     {copyAllStatus === 'success' ? (
                       <Check className="mr-2 h-4 w-4" />
@@ -282,7 +295,7 @@ export default function Home() {
                   </Button>
                   <Button 
                     onClick={handleDownloadCSV}
-                    className="bg-accent text-white hover:bg-green-600"
+                    className="bg-accent text-white hover:bg-green-600 w-full sm:w-auto"
                   >
                     <Download className="mr-2 h-4 w-4" />
                     Download as CSV
@@ -293,23 +306,23 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {leads.map((lead) => (
                   <div key={lead.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
-                      <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">
+                    <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-2">
+                      <h3 className="text-lg font-bold text-gray-900">{lead.name}</h3>
+                      <span className="bg-primary text-white px-3 py-1 rounded-full text-sm whitespace-nowrap">
                         {lead.industry}
                       </span>
                     </div>
                     <p className="text-gray-600 mb-4">{lead.reasoning}</p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                       <div className="text-sm text-gray-500 flex items-center">
-                        <Mail className="mr-1 h-4 w-4" />
-                        <span>{lead.contact}</span>
+                        <Mail className="mr-1 h-4 w-4 flex-shrink-0" />
+                        <span className="break-all">{lead.contact}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleCopyContact(lead.contact)}
-                        className="text-primary hover:text-blue-700 font-medium text-sm"
+                        className="text-primary hover:text-blue-700 font-medium text-sm whitespace-nowrap"
                       >
                         <Copy className="mr-1 h-3 w-3" />
                         Copy Contact
@@ -317,6 +330,22 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Placeholder Message */}
+        {leads.length === 0 && !isLoading && (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <div className="py-12">
+                <Search className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to Find Your Perfect Tenants?</h3>
+                <p className="text-gray-500 max-w-md mx-auto">
+                  Your tenant matches will appear here after you click "Generate Tenant Leads". 
+                  Fill out the form above to get started with AI-powered tenant suggestions.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -346,7 +375,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 REVA. All rights reserved.</p>
+            <p>&copy; 2025 REVA. All rights reserved.</p>
           </div>
         </div>
       </footer>
