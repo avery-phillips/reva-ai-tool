@@ -8,14 +8,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Search, Copy, Download, Mail, Loader2, Check } from "lucide-react";
-import { LeadFormData, TenantLead, leadFormSchema, propertyFeatures } from "@shared/schema";
+import { LeadFormData, TenantLead, Lead, leadFormSchema, propertyFeatures } from "@shared/schema";
 import { generateLeads, generateLeadsForDatabase } from "@/lib/leadGenerator";
 import { exportToCSV, copyAllLeads, copyContact } from "@/lib/csvExport";
-import { apiRequest } from "@/lib/queryClient";
 
 export default function Home() {
   const [leads, setLeads] = useState<TenantLead[]>([]);
+  const [savedLeads, setSavedLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
+  const [showSavedLeads, setShowSavedLeads] = useState(false);
   const [copyAllStatus, setCopyAllStatus] = useState<'idle' | 'success'>('idle');
   const { toast } = useToast();
 
@@ -40,13 +42,17 @@ export default function Home() {
       const leadsForDB = await generateLeadsForDatabase(data);
       
       // Save leads to database
-      await apiRequest("/api/leads", {
+      const response = await fetch("/api/leads", {
         method: "POST",
         body: JSON.stringify(leadsForDB),
         headers: {
           "Content-Type": "application/json",
         },
       });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to save leads: ${response.statusText}`);
+      }
       
       console.log(`Successfully saved ${leadsForDB.length} leads to database`);
       
@@ -109,6 +115,32 @@ export default function Home() {
         description: "Failed to download CSV file.",
         variant: "destructive",
       });
+    }
+  };
+
+  const fetchSavedLeads = async () => {
+    setIsLoadingSaved(true);
+    try {
+      const response = await fetch("/api/leads");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch leads: ${response.statusText}`);
+      }
+      const leads = await response.json();
+      setSavedLeads(leads);
+      setShowSavedLeads(true);
+      toast({
+        title: "Success",
+        description: `Loaded ${leads.length} saved leads from database.`,
+      });
+    } catch (error) {
+      console.error("Error fetching saved leads:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load saved leads from database.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingSaved(false);
     }
   };
 
@@ -276,6 +308,23 @@ export default function Home() {
                   </Button>
                 </div>
                 
+                <div className="flex justify-center mt-4">
+                  <Button 
+                    type="button"
+                    variant="secondary"
+                    onClick={fetchSavedLeads}
+                    className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    disabled={isLoadingSaved}
+                  >
+                    {isLoadingSaved ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Search className="mr-2 h-4 w-4" />
+                    )}
+                    View Saved Leads
+                  </Button>
+                </div>
+                
                 <div className="text-center text-sm text-gray-500 mt-4">
                   REVA uses AI to simulate potential tenants based on your input. Results are sample suggestions — API enrichment coming soon.
                 </div>
@@ -354,7 +403,7 @@ export default function Home() {
         )}
 
         {/* Placeholder Message */}
-        {leads.length === 0 && !isLoading && (
+        {leads.length === 0 && !isLoading && !showSavedLeads && (
           <Card>
             <CardContent className="p-8 text-center">
               <div className="py-12">
@@ -365,6 +414,79 @@ export default function Home() {
                   Fill out the form above to get started with AI-powered tenant suggestions.
                 </p>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Saved Leads Section */}
+        {showSavedLeads && (
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-2xl font-semibold text-gray-900">💾 Saved Leads from Database</h2>
+                <Button 
+                  onClick={() => setShowSavedLeads(false)}
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                >
+                  Hide Saved Leads
+                </Button>
+              </div>
+              
+              {isLoadingSaved ? (
+                <div className="text-center py-8">
+                  <Loader2 className="inline-block h-8 w-8 animate-spin text-primary" />
+                  <p className="mt-4 text-gray-600">Loading saved leads...</p>
+                </div>
+              ) : savedLeads.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No saved leads found in database.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {savedLeads.map((lead) => (
+                    <div key={lead.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-2">
+                        <h3 className="text-lg font-bold text-gray-900">{lead.businessName}</h3>
+                        <span className="bg-primary text-white px-3 py-1 rounded-full text-sm whitespace-nowrap">
+                          {lead.industry}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-4">{lead.rationale}</p>
+                      <div className="space-y-2 mb-4">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Contact:</span> {lead.contactName}
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-700">Email:</span> {lead.email}
+                        </div>
+                        {lead.website && (
+                          <div className="text-sm">
+                            <span className="font-medium text-gray-700">Website:</span>{" "}
+                            <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                              {lead.website}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <div className="text-xs text-gray-400">
+                          Saved: {new Date(lead.createdAt).toLocaleDateString()}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCopyContact(lead.email)}
+                          className="text-primary hover:text-blue-700 font-medium text-sm whitespace-nowrap"
+                        >
+                          <Copy className="mr-1 h-3 w-3" />
+                          Copy Email
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
