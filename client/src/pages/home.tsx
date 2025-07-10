@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, Search, Copy, Download, Mail, Loader2, Check } from "lucide-react";
+import { CheckCircle, Search, Copy, Download, Mail, Loader2, Check, Phone, User, Briefcase, Linkedin, Building2, Globe } from "lucide-react";
 import { LeadFormData, TenantLead, Lead, leadFormSchema, propertyFeatures } from "@shared/schema";
 import { generateLeads, generateLeadsForDatabase } from "@/lib/leadGenerator";
 import { exportToCSV, copyAllLeads, copyContact } from "@/lib/csvExport";
@@ -236,6 +236,15 @@ export default function Home() {
         <Card className="mb-8">
           <CardContent className="p-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Find Your Perfect Commercial Tenants</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center gap-2 text-blue-800">
+                <Phone className="h-4 w-4" />
+                <span className="font-medium">Enhanced Lead Enrichment</span>
+              </div>
+              <p className="text-blue-700 text-sm mt-1">
+                Top 3 generated leads are automatically enriched with phone numbers and LinkedIn profiles using People Data Labs API.
+              </p>
+            </div>
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -541,42 +550,127 @@ export default function Home() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredLeads.map((lead) => (
-                    <div key={lead.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div key={lead.id} className={`rounded-lg p-6 hover:shadow-md transition-shadow ${lead.isEnriched ? 'bg-gradient-to-br from-blue-50 to-green-50 border-2 border-blue-200' : 'bg-gray-50'}`}>
                       <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-2">
-                        <h3 className="text-lg font-bold text-gray-900">{lead.businessName}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-bold text-gray-900">{lead.businessName}</h3>
+                          {lead.isEnriched && (
+                            <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                              ✨ Enhanced
+                            </span>
+                          )}
+                        </div>
                         <span className="bg-primary text-white px-3 py-1 rounded-full text-sm whitespace-nowrap">
                           {lead.industry}
                         </span>
                       </div>
                       <p className="text-gray-600 mb-4">{lead.rationale}</p>
+                      
+                      {/* Contact Information - Prioritize phone for enriched leads */}
                       <div className="space-y-2 mb-4">
+                        {/* Display enriched name with title if available */}
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Contact:</span> {lead.contactName}
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-gray-500" />
+                            <span className="font-medium text-gray-700">
+                              {lead.enrichedName || lead.contactName}
+                              {lead.title && (
+                                <span className="text-gray-500 ml-1">
+                                  • {lead.title}
+                                </span>
+                              )}
+                            </span>
+                          </div>
                         </div>
+
+                        {/* Phone number (priority for enriched leads) */}
+                        {lead.phone && (
+                          <div className="text-sm">
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4 text-green-600" />
+                              <span className="font-medium text-gray-700">Phone:</span>
+                              <span className="text-gray-600">{lead.phone}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleCopyContact(lead.phone)}
+                                className="p-1 h-6 w-6"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Email */}
                         <div className="text-sm">
-                          <span className="font-medium text-gray-700">Email:</span> {lead.email}
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-700">Email:</span>
+                            <span className="text-gray-600">{lead.email}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopyContact(lead.email)}
+                              className="p-1 h-6 w-6"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
+
+                        {/* Website */}
                         {lead.website && (
                           <div className="text-sm">
-                            <span className="font-medium text-gray-700">Website:</span>{" "}
-                            <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                              {lead.website}
-                            </a>
+                            <div className="flex items-center gap-2">
+                              <Globe className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium text-gray-700">Website:</span>
+                              <a 
+                                href={lead.website} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-primary hover:underline"
+                              >
+                                {lead.website.replace(/https?:\/\//, '')}
+                              </a>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* LinkedIn */}
+                        {lead.linkedinUrl && (
+                          <div className="text-sm">
+                            <div className="flex items-center gap-2">
+                              <Linkedin className="h-4 w-4 text-blue-700" />
+                              <span className="font-medium text-gray-700">LinkedIn:</span>
+                              <a 
+                                href={lead.linkedinUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-blue-700 hover:underline"
+                              >
+                                View Profile
+                              </a>
+                            </div>
                           </div>
                         )}
                       </div>
+
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div className="text-xs text-gray-400">
                           Saved: {new Date(lead.createdAt).toLocaleDateString()}
+                          {lead.isEnriched && (
+                            <span className="ml-2 text-blue-500 font-medium">• Enhanced with PDL</span>
+                          )}
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleCopyContact(lead.email)}
+                          onClick={() => handleCopyContact(lead.phone || lead.email)}
                           className="text-primary hover:text-blue-700 font-medium text-sm whitespace-nowrap"
                         >
                           <Copy className="mr-1 h-3 w-3" />
-                          Copy Email
+                          Copy {lead.phone ? 'Phone' : 'Email'}
                         </Button>
                       </div>
                     </div>

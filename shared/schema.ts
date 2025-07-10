@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const leadFormSchema = z.object({
@@ -54,8 +54,12 @@ export const leads = pgTable("leads", {
   rationale: text("rationale").notNull(),
   contactName: text("contact_name").notNull(),
   email: text("email").notNull(),
+  phone: text("phone"), // PDL enriched phone number
   website: text("website"),
   linkedinUrl: text("linkedin_url"),
+  title: text("title"), // PDL enriched job title
+  enrichedName: text("enriched_name"), // PDL enriched full name
+  isEnriched: boolean("is_enriched").default(false), // Flag to track PDL enrichment
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

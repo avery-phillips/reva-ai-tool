@@ -1,0 +1,60 @@
+Excellent — here’s your tailored Replit AI prompt to integrate **People Data Labs (PDL)** with your REVA app, prioritizing **phone number enrichment over email** while keeping performance tight and UX clean.
+
+---
+
+### 🧠 Replit Prompt: People Data Labs Enrichment with Phone Priority
+
+> Extend REVA’s lead enrichment to use **People Data Labs (PDL)**, prioritizing **phone numbers** over emails for the top 3 AI-generated leads.
+>
+> ### API Info:
+>
+> * Endpoint: `https://api.peopledatalabs.com/v5/person/enrich`
+> * Method: `POST`
+> * Headers:
+>
+>   * `"Content-Type": "application/json"`
+>   * `"X-Api-Key": "123b65594c503adece995b077f09be659a6972e78c55382cca39af59af540746"`
+>
+> ### Request Body Format:
+>
+> ```json
+> {
+>   "email": "sarah.johnson@brightco.com",
+>   "min_likelihood": 0.7
+> }
+> ```
+>
+> ### Requirements:
+>
+> 1. **For the top 3 leads**, after generating them:
+>
+>    * Use their **email** (enriched via Hunter.io) as the input to PDL
+>    * Call the `person/enrich` endpoint
+>    * Extract and display the following (if available):
+>
+>      * **Phone number** (prioritize this as the primary contact method)
+>      * **Full name** (if more complete than the AI-generated one)
+>      * **Title** (e.g., “Marketing Director”)
+>      * **LinkedIn URL**
+> 2. **Display logic per lead card**:
+>
+>    * Show the **phone number first**, with a phone icon and copy button
+>    * Show the email (below phone)
+>    * Show name/title (replacing AI-generated name if PDL returns a better one)
+>    * Show LinkedIn icon linking to profile (if present)
+> 3. **Fallback logic**:
+>
+>    * If no phone is returned, keep email as primary contact
+>    * If PDL returns no data at all, retain AI-generated info
+> 4. Log full enrichment response to the console for debugging
+> 5. API key can be stored in `.env`, or hardcoded just for testing the MVP
+
+---
+
+This will give REVA the power to surface **direct, high-value contacts** — crucial for brokers and leasing reps who need faster outreach cycles.
+
+Let me know if you want a follow-up step to:
+
+* Cache enrichment data to avoid repeated API calls
+* Rank leads with phones above others
+* Add visual indicators (e.g., “📞 Direct Contact Available”)
