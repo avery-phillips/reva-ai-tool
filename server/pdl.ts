@@ -39,7 +39,15 @@ export async function enrichPersonWithPDL(email: string): Promise<{
   error?: string;
 }> {
   try {
-    console.log(`🔍 Enriching lead with PDL API for email: ${email}`);
+    console.log(`🔍 Making REAL PDL API request for email: ${email}`);
+    console.log(`📡 PDL Endpoint: ${PDL_ENDPOINT}`);
+    console.log(`🔑 API Key present: ${PDL_API_KEY ? 'YES' : 'NO'}`);
+    
+    const requestBody = {
+      email: email,
+      min_likelihood: 7,
+    };
+    console.log(`📤 Request body:`, JSON.stringify(requestBody, null, 2));
     
     const response = await fetch(PDL_ENDPOINT, {
       method: "POST",
@@ -47,11 +55,11 @@ export async function enrichPersonWithPDL(email: string): Promise<{
         "Content-Type": "application/json",
         "X-Api-Key": PDL_API_KEY,
       },
-      body: JSON.stringify({
-        email: email,
-        min_likelihood: 0.7,
-      }),
+      body: JSON.stringify(requestBody),
     });
+
+    console.log(`📥 PDL Response status: ${response.status}`);
+    console.log(`📥 PDL Response headers:`, Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -65,7 +73,7 @@ export async function enrichPersonWithPDL(email: string): Promise<{
     const result: PDLPersonResponse = await response.json();
     
     // Log full response for debugging
-    console.log("📋 Full PDL API response:", JSON.stringify(result, null, 2));
+    console.log("📋 FULL PDL API RESPONSE:", JSON.stringify(result, null, 2));
 
     if (result.status === 200 && result.data) {
       const data = result.data;
@@ -99,10 +107,10 @@ export async function enrichPersonWithPDL(email: string): Promise<{
       console.log(`✅ PDL enrichment successful for ${email}:`, enrichedData);
       return enrichedData;
     } else {
-      console.log(`ℹ️ PDL returned no data for ${email} (status: ${result.status})`);
+      console.log(`⚠️ No real match found for ${email} (status: ${result.status})`);
       return {
         success: false,
-        error: result.error?.message || 'No data found',
+        error: result.error?.message || '⚠️ No real match found',
       };
     }
   } catch (error) {

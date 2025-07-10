@@ -659,8 +659,10 @@ export default function Home() {
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div className="text-xs text-gray-400">
                           Saved: {new Date(lead.createdAt).toLocaleDateString()}
-                          {lead.isEnriched && (
+                          {lead.isEnriched ? (
                             <span className="ml-2 text-blue-500 font-medium">• Enhanced with PDL</span>
+                          ) : (
+                            <span className="ml-2 text-orange-500 font-medium">• ⚠️ No real match found</span>
                           )}
                         </div>
                         <Button
