@@ -15,6 +15,11 @@ export const tenantLeadSchema = z.object({
   industry: z.string(),
   reasoning: z.string(),
   contact: z.string(),
+  isEnriched: z.boolean().optional(),
+  phone: z.string().optional(),
+  enrichedName: z.string().optional(),
+  title: z.string().optional(),
+  linkedinUrl: z.string().optional(),
 });
 
 export type LeadFormData = z.infer<typeof leadFormSchema>;
