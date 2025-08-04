@@ -1,6 +1,86 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+server/public/
+*.local
+
+# Environment variables (CRITICAL: Never commit secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# IDEs and editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
 .DS_Store
-server/public
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.history/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+
+# Temporary folders
+tmp/
+temp/
+
+# Vite specific
 vite.config.ts.*
+
+# Archives
 *.tar.gz
+*.zip
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Security: Never commit these patterns
+**/secrets/
+**/*secret*
+**/*key*
+**/*password*
+**/*token*
+
+# Replit specific (optional - remove if you want to include them)
+.replit
+replit.nix
