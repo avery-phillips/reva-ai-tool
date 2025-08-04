@@ -45,7 +45,7 @@ export async function enrichPersonWithPDL(email: string): Promise<{
     
     const requestBody = {
       email: email,
-      min_likelihood: 7,
+      min_likelihood: 3,
     };
     console.log(`📤 Request body:`, JSON.stringify(requestBody, null, 2));
     

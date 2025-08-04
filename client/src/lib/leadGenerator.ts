@@ -7,7 +7,7 @@ const mockBusinessDataForDB = [
     industry: "Digital Marketing Agency",
     rationale: "Growing marketing firm needs professional office space with good visibility for client meetings and team collaboration.",
     contactName: "Sarah Johnson",
-    email: "seanemlenhiser@gmail.com", // Using potentially real email for PDL testing
+    email: "sarah.martinez@gmail.com", // Common email pattern more likely in PDL
     website: "https://brightcomarketing.com",
     linkedinUrl: "https://linkedin.com/company/brightco-marketing"
   },
@@ -16,7 +16,7 @@ const mockBusinessDataForDB = [
     industry: "Coffee Shop & Roastery",
     rationale: "Established coffee roaster looking to expand retail presence with high foot traffic and storage for inventory.",
     contactName: "Mike Wilson",
-    email: "tom@peopledatalabs.com", // Using PDL company email for testing
+    email: "mike.johnson@gmail.com", // Common email pattern more likely in PDL
     website: "https://artisancoffeeroasters.com",
     linkedinUrl: "https://linkedin.com/company/artisan-coffee-roasters"
   },
@@ -25,7 +25,7 @@ const mockBusinessDataForDB = [
     industry: "Software Development",
     rationale: "Fast-growing tech startup requiring modern office space with parking for remote team meetups and client presentations.",
     contactName: "Alex Chen",
-    email: "johnlee@apollographql.com", // Using potentially real professional email
+    email: "alex.smith@gmail.com", // Common email pattern more likely in PDL
     website: "https://techstartsolutions.io",
     linkedinUrl: "https://linkedin.com/company/techstart-solutions"
   },
