@@ -108,7 +108,7 @@ export function generateLeads(formData: LeadFormData): Promise<TenantLead[]> {
     setTimeout(() => {
       // Shuffle and select random results
       const shuffled = mockBusinessData.sort(() => 0.5 - Math.random());
-      const resultCount = Math.floor(Math.random() * 6) + 5; // 5-10 results
+      const resultCount = 5; // Always return 5 results
       const selectedResults = shuffled.slice(0, resultCount);
       
       // Add unique IDs
@@ -128,7 +128,7 @@ export function generateLeadsForDatabase(formData: LeadFormData): Promise<Insert
     setTimeout(() => {
       // Shuffle and select random results
       const shuffled = mockBusinessDataForDB.sort(() => 0.5 - Math.random());
-      const resultCount = Math.floor(Math.random() * 6) + 5; // 5-10 results
+      const resultCount = 5; // Always return 5 results
       const selectedResults = shuffled.slice(0, resultCount);
       
       resolve(selectedResults);
