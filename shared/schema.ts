@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { pgTable, serial, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, uuid, boolean, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 export const leadFormSchema = z.object({
@@ -66,7 +66,13 @@ export const leads = pgTable("leads", {
   enrichedName: text("enriched_name"), // PDL enriched full name
   isEnriched: boolean("is_enriched").default(false), // Flag to track PDL enrichment
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  // Performance: Add database indexes for common queries
+  industryIdx: index("leads_industry_idx").on(table.industry),
+  createdAtIdx: index("leads_created_at_idx").on(table.createdAt),
+  enrichedIdx: index("leads_enriched_idx").on(table.isEnriched),
+  emailIdx: index("leads_email_idx").on(table.email),
+}));
 
 export const insertLeadSchema = createInsertSchema(leads).omit({
   id: true,

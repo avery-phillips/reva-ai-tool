@@ -1,0 +1,70 @@
+Review and enhance Reva. The primary objective is to evaluate its current state regarding security, scalability, and code quality, and then propose and implement improvements to bring it up to professional standards.
+
+Core Principles:
+
+Conduct a thorough security audit to identify and fix potential vulnerabilities.
+
+Analyze the current architecture for performance bottlenecks and scalability issues.
+
+Refactor and improve the existing codebase for better maintainability and clarity.
+
+Technical Requirements & Deliverables:
+
+Security Audit & Remediation:
+
+Vulnerability Analysis: Scan the existing code for common web vulnerabilities, including but not limited to:
+
+Insecure handling of user input (e.g., lack of sanitization).
+
+Weak or missing authentication/authorization checks.
+
+Exposure of sensitive data or credentials.
+
+Lack of rate limiting on critical endpoints.
+
+Recommendations & Implementation: For each identified vulnerability, provide a clear explanation of the risk and implement a fix. This includes:
+
+Implementing robust server-side input validation and sanitization.
+
+Correcting any security flaws in authentication or authorization logic.
+
+Ensuring all sensitive data is moved to Replit Secrets.
+
+Adding rate limiting to applicable endpoints.
+
+Scalability & Performance Enhancement:
+
+Performance Analysis: Review the database queries, API logic, and overall data flow to identify potential performance bottlenecks.
+
+Optimization Plan: Propose and implement optimizations to improve scalability, such as:
+
+Adding or updating database indexes to speed up slow queries.
+
+Refactoring inefficient code to reduce resource usage.
+
+Implementing a basic caching mechanism if applicable.
+
+Suggesting how computationally heavy tasks (e.g., AI inference) could be made asynchronous if not already.
+
+Code Refactoring & Professionalism:
+
+Code Quality Review: Analyze the codebase for adherence to best practices. This includes checking for code clarity, consistency, and separation of concerns.
+
+Refactoring: Refactor the existing code to improve its modularity, readability, and maintainability.
+
+Documentation:
+
+Create a new README.md file (or update the existing one) that details:
+
+The original app's function.
+
+A summary of the security vulnerabilities found and how they were fixed.
+
+A list of all performance and scalability improvements.
+
+Updated instructions for setting up and running the now-enhanced app.
+
+Add clear and concise comments to the code, especially to the sections that were refactored or where security measures were implemented.
+
+Deliverables:
+Provide the enhanced Replit project with all changes directly integrated into the codebase. Include a detailed report (as a new file named ENHANCEMENT_REPORT.md within the project) summarizing the audit findings, the implemented fixes, and the performance optimizations. This report should clearly explain the "before and after" state of the app.

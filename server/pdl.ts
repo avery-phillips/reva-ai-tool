@@ -1,3 +1,5 @@
+import { cache } from './middleware/cache';
+
 // People Data Labs API integration
 interface PDLPersonResponse {
   status: number;
@@ -27,7 +29,7 @@ interface PDLPersonResponse {
   };
 }
 
-const PDL_API_KEY = "123b65594c503adece995b077f09be659a6972e78c55382cca39af59af540746";
+const PDL_API_KEY = process.env.PDL_API_KEY;
 const PDL_ENDPOINT = "https://api.peopledatalabs.com/v5/person/enrich";
 
 export async function enrichPersonWithPDL(email: string): Promise<{
@@ -39,9 +41,34 @@ export async function enrichPersonWithPDL(email: string): Promise<{
   error?: string;
 }> {
   try {
-    console.log(`🔍 Making REAL PDL API request for email: ${email}`);
+    // Security: Validate email format before API call
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return {
+        success: false,
+        error: 'Invalid email format',
+      };
+    }
+
+    // Security: Check API key availability without logging it
+    if (!PDL_API_KEY) {
+      console.error('❌ PDL API key not configured in environment variables');
+      return {
+        success: false,
+        error: 'PDL API key not configured',
+      };
+    }
+
+    // Performance: Check cache first
+    const cacheKey = `pdl:${email}`;
+    const cachedResult = cache.get(cacheKey);
+    if (cachedResult) {
+      console.log(`📋 Using cached PDL data for ${email.substring(0, 3)}***`);
+      return cachedResult;
+    }
+
+    console.log(`🔍 Making PDL API request for email: ${email.substring(0, 3)}***`);
     console.log(`📡 PDL Endpoint: ${PDL_ENDPOINT}`);
-    console.log(`🔑 API Key present: ${PDL_API_KEY ? 'YES' : 'NO'}`);
     
     const requestBody = {
       email: email,
@@ -105,13 +132,22 @@ export async function enrichPersonWithPDL(email: string): Promise<{
       };
 
       console.log(`✅ PDL enrichment successful for ${email}:`, enrichedData);
+      
+      // Performance: Cache successful results for 1 hour
+      cache.set(cacheKey, enrichedData, 60 * 60 * 1000);
+      
       return enrichedData;
     } else {
       console.log(`⚠️ No real match found for ${email} (status: ${result.status})`);
-      return {
+      const failureResult = {
         success: false,
         error: result.error?.message || '⚠️ No real match found',
       };
+      
+      // Performance: Cache negative results for 30 minutes to reduce API calls
+      cache.set(cacheKey, failureResult, 30 * 60 * 1000);
+      
+      return failureResult;
     }
   } catch (error) {
     console.error(`💥 PDL API request failed for ${email}:`, error);

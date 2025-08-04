@@ -1,6 +1,6 @@
 import { users, leads, type User, type InsertUser, type Lead, type InsertLead } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc, count } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -10,7 +10,8 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   createLeads(leads: InsertLead[]): Promise<Lead[]>;
-  getAllLeads(): Promise<Lead[]>;
+  getAllLeads(limit?: number, offset?: number): Promise<Lead[]>;
+  getLeadsCount(): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -46,8 +47,16 @@ export class DatabaseStorage implements IStorage {
     return savedLeads;
   }
 
-  async getAllLeads(): Promise<Lead[]> {
-    return await db.select().from(leads);
+  async getAllLeads(limit: number = 50, offset: number = 0): Promise<Lead[]> {
+    return await db.select().from(leads)
+      .orderBy(desc(leads.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getLeadsCount(): Promise<number> {
+    const result = await db.select({ count: count() }).from(leads);
+    return result[0].count;
   }
 }
 
