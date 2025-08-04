@@ -26,20 +26,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const validateLeadInput = [
     body('*.businessName')
       .isLength({ min: 1, max: 255 })
-      .withMessage('Business name must be between 1 and 255 characters')
-      .escape(),
+      .withMessage('Business name must be between 1 and 255 characters'),
     body('*.industry')
       .isLength({ min: 1, max: 100 })
-      .withMessage('Industry must be between 1 and 100 characters')
-      .escape(),
+      .withMessage('Industry must be between 1 and 100 characters'),
     body('*.rationale')
       .isLength({ min: 1, max: 1000 })
-      .withMessage('Rationale must be between 1 and 1000 characters')
-      .escape(),
+      .withMessage('Rationale must be between 1 and 1000 characters'),
     body('*.contactName')
       .isLength({ min: 1, max: 255 })
-      .withMessage('Contact name must be between 1 and 255 characters')
-      .escape(),
+      .withMessage('Contact name must be between 1 and 255 characters'),
     body('*.email')
       .isEmail()
       .normalizeEmail()

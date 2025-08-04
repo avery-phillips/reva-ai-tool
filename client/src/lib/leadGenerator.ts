@@ -13,7 +13,7 @@ const mockBusinessDataForDB = [
   },
   {
     businessName: "Artisan Coffee Roasters",
-    industry: "Coffee Shop & Roastery",
+    industry: "Coffee Shop and Roastery",
     rationale: "Established coffee roaster looking to expand retail presence with high foot traffic and storage for inventory.",
     contactName: "Mike Wilson",
     email: "mike.johnson@gmail.com", // Common email pattern more likely in PDL
@@ -31,7 +31,7 @@ const mockBusinessDataForDB = [
   },
   {
     businessName: "Urban Fitness Studio",
-    industry: "Health & Wellness",
+    industry: "Health and Wellness",
     rationale: "Boutique fitness brand seeking ground-floor space with parking and high visibility for walk-in customers.",
     contactName: "Jenny Martinez",
     email: "jennifer.brown@gmail.com", // Common email pattern more likely in PDL
@@ -76,7 +76,7 @@ const mockBusinessDataForDB = [
   },
   {
     businessName: "Innovation Labs",
-    industry: "Research & Development",
+    industry: "Research and Development",
     rationale: "R&D company requires flexible office space with room for equipment and collaborative work areas.",
     contactName: "James Kim",
     email: "james.kim@innovationlabs.com",
