@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { body, validationResult } from "express-validator";
+import { searchBusinesses } from "./googlePlaces";
 import { storage } from "./storage";
 import { enrichTopLeads } from "./pdl";
 import { insertLeadSchema } from "@shared/schema";
@@ -153,6 +154,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching leads:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // New API endpoint for searching real businesses using Google Places
+  app.post("/api/search-businesses", leadGenerationLimiter, async (req, res) => {
+    try {
+      const { businessType, targetLocation, squareFootage, features } = req.body;
+      
+      // Input validation
+      if (!businessType || !targetLocation) {
+        return res.status(400).json({ 
+          error: "businessType and targetLocation are required" 
+        });
+      }
+      
+      console.log(`🔍 Searching for ${businessType} businesses in ${targetLocation}`);
+      
+      // Search for real businesses using Google Places API
+      const realBusinesses = await searchBusinesses(
+        businessType, 
+        targetLocation, 
+        squareFootage || "1000", 
+        features || []
+      );
+      
+      console.log(`✅ Found ${realBusinesses.length} real businesses from Google Places`);
+      res.json(realBusinesses);
+      
+    } catch (error) {
+      console.error("Error searching businesses:", error);
+      res.status(500).json({ 
+        error: "Failed to search businesses", 
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 

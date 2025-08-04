@@ -84,6 +84,8 @@ The application uses Zod schemas for type safety across the stack:
 - **Enhanced Data Model**: Added comprehensive lead schema with business contact details
 - **API Routes**: Implemented RESTful endpoints for lead creation and retrieval
 - **People Data Labs Integration**: Real-time API enrichment with phone numbers and LinkedIn profiles
+- **Google Places API Integration**: Replaced mock data with real business discovery from Google Maps
+- **Authentic Data Pipeline**: Real businesses found via Places API, enriched with PDL contact data
 
 ### Security & Performance Enhancement (January 2025)
 - **Comprehensive Security Audit**: Fixed 6 critical/high security vulnerabilities
@@ -99,7 +101,8 @@ The application uses Zod schemas for type safety across the stack:
 
 ### Current Implementation Notes
 - **Storage**: PostgreSQL database with optimized indexes and query performance
-- **Lead Generation**: Real PDL API integration with intelligent caching and fallback systems
+- **Lead Generation**: Google Places API integration discovers real businesses, PDL API enriches contacts
+- **Data Sources**: Authentic business data from Google Maps combined with real contact enrichment
 - **Security**: Production-ready security posture with comprehensive vulnerability mitigation
 - **Performance**: 69% average response time improvement with caching and optimization
 - **Monitoring**: Full observability with request metrics, error tracking, and health endpoints

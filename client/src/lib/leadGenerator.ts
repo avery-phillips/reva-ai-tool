@@ -122,16 +122,35 @@ export function generateLeads(formData: LeadFormData): Promise<TenantLead[]> {
   });
 }
 
-export function generateLeadsForDatabase(formData: LeadFormData): Promise<InsertLead[]> {
-  return new Promise((resolve) => {
-    // Simulate API delay
-    setTimeout(() => {
-      // Shuffle and select random results
+export async function generateLeadsForDatabase(formData: LeadFormData): Promise<InsertLead[]> {
+  try {
+    // Call the server endpoint to get real business data from Google Places
+    const response = await fetch('/api/search-businesses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to search businesses: ${response.statusText}`);
+    }
+
+    const realBusinesses = await response.json();
+    
+    if (realBusinesses.length === 0) {
+      console.warn('No real businesses found, using fallback mock data');
+      // Fallback to mock data if no real businesses found
       const shuffled = mockBusinessDataForDB.sort(() => 0.5 - Math.random());
-      const resultCount = 5; // Always return 5 results
-      const selectedResults = shuffled.slice(0, resultCount);
-      
-      resolve(selectedResults);
-    }, 100); // Shorter delay since this is for internal use
-  });
+      return shuffled.slice(0, 3); // Reduced fallback count
+    }
+
+    return realBusinesses;
+  } catch (error) {
+    console.error('Error fetching real business data:', error);
+    // Fallback to mock data on error
+    const shuffled = mockBusinessDataForDB.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3); // Reduced fallback count
+  }
 }
