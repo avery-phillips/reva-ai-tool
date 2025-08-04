@@ -11,20 +11,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const leadsData = z.array(insertLeadSchema).parse(req.body);
       
-      // Enrich top 3 leads with PDL data
-      console.log("🔍 Starting PDL enrichment for top 3 leads...");
+      // Enrich top 5 leads with PDL data to ensure we get 3 real matches
+      console.log("🔍 Starting PDL enrichment for top 5 leads to get 3 real matches...");
       const enrichedData = await enrichTopLeads(
         leadsData.map(lead => ({
           email: lead.email,
           contactName: lead.contactName,
           businessName: lead.businessName
         })),
-        3
+        5
       );
       
-      // Merge enrichment data back into leads
+      // Merge enrichment data back into leads - prioritize successful enrichments
+      const successfulEnrichments = enrichedData.filter(e => e.enrichment.success);
+      console.log(`🎯 Found ${successfulEnrichments.length} successful PDL enrichments`);
+      
       const leadsWithEnrichment = leadsData.map((lead, index) => {
-        if (index < 3) {
+        if (index < 5) { // Check first 5 leads for enrichment
           const enrichment = enrichedData[index]?.enrichment;
           if (enrichment?.success) {
             return {
@@ -42,6 +45,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           isEnriched: false
         };
       });
+      
+      // Count and log successful enrichments
+      const enrichedCount = leadsWithEnrichment.filter(lead => lead.isEnriched).length;
+      console.log(`✨ Successfully enriched ${enrichedCount} leads with PDL data`);
       
       const savedLeads = await storage.createLeads(leadsWithEnrichment);
       

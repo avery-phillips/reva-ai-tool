@@ -34,7 +34,7 @@ const mockBusinessDataForDB = [
     industry: "Health & Wellness",
     rationale: "Boutique fitness brand seeking ground-floor space with parking and high visibility for walk-in customers.",
     contactName: "Jenny Martinez",
-    email: "jenny.martinez@urbanfitness.com",
+    email: "jennifer.brown@gmail.com", // Common email pattern more likely in PDL
     website: "https://urbanfitnessstudio.com",
     linkedinUrl: "https://linkedin.com/company/urban-fitness-studio"
   },
@@ -43,7 +43,7 @@ const mockBusinessDataForDB = [
     industry: "Specialty Food Store",
     rationale: "Premium food retailer needs accessible location with loading dock for deliveries and retail visibility.",
     contactName: "David Brown",
-    email: "david.brown@gourmetprovisions.com",
+    email: "david.wilson@gmail.com", // Common email pattern more likely in PDL
     website: "https://gourmetprovisions.com",
     linkedinUrl: "https://linkedin.com/company/gourmet-provisions"
   },
@@ -52,7 +52,7 @@ const mockBusinessDataForDB = [
     industry: "Graphic Design Studio",
     rationale: "Design agency looking for inspiring workspace with natural light and space for creative team collaboration.",
     contactName: "Lisa Thompson",
-    email: "lisa.thompson@creativedesign.co",
+    email: "lisa.johnson@gmail.com", // Common email pattern more likely in PDL
     website: "https://creativedesignco.com",
     linkedinUrl: "https://linkedin.com/company/creative-design-co"
   },
