@@ -9,6 +9,9 @@ import { monitoringMiddleware } from "./middleware/monitoring";
 
 const app = express();
 
+// Security: Trust proxy for Replit environment to fix rate limiting warnings
+app.set('trust proxy', 1);
+
 // Security: Enable security headers
 app.use(helmet({
   contentSecurityPolicy: {

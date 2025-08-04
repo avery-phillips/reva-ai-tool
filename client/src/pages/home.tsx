@@ -148,7 +148,9 @@ export default function Home() {
       if (!response.ok) {
         throw new Error(`Failed to fetch leads: ${response.statusText}`);
       }
-      const leads = await response.json();
+      const data = await response.json();
+      // Handle both old array format and new paginated format
+      const leads = Array.isArray(data) ? data : data.leads || [];
       setSavedLeads(leads);
       setFilteredLeads(leads);
       setShowSavedLeads(true);
